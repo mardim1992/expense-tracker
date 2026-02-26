@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <p>Hi, {{ request.user.username }}!</p>
+
+  <p><a href="{% url 'logout' %}">Logout</a></p>
+
+  <hr>
+
+  <h2>This month ({{ month_start|date:"Y-m" }})</h2>
+  <ul>
+    <li>Total Income: {{ total_income }}</li>
+    <li>Total Expenses: {{ total_expenses }}</li>
+    <li>Net: {{ net }}</li>
+  </ul>
+
+  <h3>Budget</h3>
+  {% if budget_limit %}
+    <p>Limit: {{ budget_limit }}</p>
+    <p>Remaining: {{ budget_remaining }}</p>
+  {% else %}
+    <p>No budget set for this month.</p>
+  {% endif %}
+
+  <hr>
+
+  <h3>Recent Expenses</h3>
+  <ul>
+    {% for e in recent_expenses %}
+      <li>{{ e.date }} - {{ e.get_category_display }} - {{ e.amount }} {% if e.description %} ({{ e.description }}){% endif %}</li>
+    {% empty %}
+      <li>No expenses yet.</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Recent Incomes</h3>
+  <ul>
+    {% for i in recent_incomes %}
+      <li>{{ i.date }} - {{ i.get_category_display }} - {{ i.amount }} {% if i.description %} ({{ i.description }}){% endif %}</li>
+    {% empty %}
+      <li>No incomes yet.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
