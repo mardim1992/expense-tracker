@@ -5,6 +5,7 @@ from .forms import ExpenseForm, RegisterForm, IncomeForm, BudgetForm
 from django.db.models import Sum
 from datetime import date
 from .models import Expense, Income, Budget
+from django.core.paginator import Paginator
 
 def home(request):
     return render(request, "core/home.html")
@@ -103,4 +104,49 @@ def set_budget(request):
         form = BudgetForm()
 
     return render(request, "core/set_budget.html", {"form": form})
+@login_required
+def history(request):
+
+    date_from = request.GET.get("from")
+    date_to = request.GET.get("to")
+    category = request.GET.get("category")
+
+    expenses = Expense.objects.filter(user=request.user).order_by("-date", "-id")
+    incomes = Income.objects.filter(user=request.user).order_by("-date", "-id")
+
+    if date_from:
+        expenses = expenses.filter(date__gte=date_from)
+        incomes = incomes.filter(date__gte=date_from)
+    if date_to:
+        expenses = expenses.filter(date__lte=date_to)
+        incomes = incomes.filter(date__lte=date_to)
+    if category:
+        expenses = expenses.filter(category=category)
+        incomes = incomes.filter(category=category)
+
+    exp_paginator = Paginator(expenses, 10)
+    inc_paginator = Paginator(incomes, 10)
+
+    exp_page = exp_paginator.get_page(request.GET.get("exp_page"))
+    inc_page = inc_paginator.get_page(request.GET.get("inc_page"))
+
+    expense_choices = list(Expense._meta.get_field("category").choices)
+    income_choices = list(Income._meta.get_field("category").choices)
+
+
+    seen = set()
+    categories = []
+    for value, label in (expense_choices + income_choices):
+        if value not in seen:
+            categories.append((value, label))
+            seen.add(value)
+
+    return render(request, "core/history.html", {
+        "exp_page": exp_page,
+        "inc_page": inc_page,
+        "date_from": date_from or "",
+        "date_to": date_to or "",
+        "category": category or "",
+        "categories":  categories,
+    })
 

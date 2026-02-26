@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>History</title>
+</head>
+<body>
+  <h1>History</h1>
+  <p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+
+  <h3>Filters</h3>
+  <form method="get">
+    <label>From:</label>
+    <input type="date" name="from" value="{{ date_from }}">
+    <label>To:</label>
+    <input type="date" name="to" value="{{ date_to }}">
+    <label>Category:</label>
+    <select name="category">
+  <option value="">All</option>
+  {% for value, label in categories %}
+    <option value="{{ value }}" {% if category == value %}selected{% endif %}>
+      {{ label }}
+    </option>
+  {% endfor %}
+</select>
+    <button type="submit">Apply</button>
+    <a href="{% url 'history' %}">Clear</a>
+  </form>
+
+  <hr>
+
+  <h2>Expenses</h2>
+  <ul>
+    {% for e in exp_page %}
+      <li>{{ e.date }} - {{ e.get_category_display }} - {{ e.amount }} ({{ e.description }})</li>
+    {% empty %}
+      <li>No expenses.</li>
+    {% endfor %}
+  </ul>
+
+  {% if exp_page.has_other_pages %}
+    <p>
+      {% if exp_page.has_previous %}
+        <a href="?exp_page={{ exp_page.previous_page_number }}&inc_page={{ inc_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Prev</a>
+      {% endif %}
+      Page {{ exp_page.number }} of {{ exp_page.paginator.num_pages }}
+      {% if exp_page.has_next %}
+        <a href="?exp_page={{ exp_page.next_page_number }}&inc_page={{ inc_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Next</a>
+      {% endif %}
+    </p>
+  {% endif %}
+
+  <hr>
+
+  <h2>Incomes</h2>
+  <ul>
+    {% for i in inc_page %}
+      <li>{{ i.date }} - {{ i.get_category_display }} - {{ i.amount }} {% if i.description %}({{ i.description }}){% endif %}</li>
+    {% empty %}
+      <li>No incomes.</li>
+    {% endfor %}
+  </ul>
+
+  {% if inc_page.has_other_pages %}
+    <p>
+      {% if inc_page.has_previous %}
+        <a href="?inc_page={{ inc_page.previous_page_number }}&exp_page={{ exp_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Prev</a>
+      {% endif %}
+      Page {{ inc_page.number }} of {{ inc_page.paginator.num_pages }}
+      {% if inc_page.has_next %}
+        <a href="?inc_page={{ inc_page.next_page_number }}&exp_page={{ exp_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Next</a>
+      {% endif %}
+    </p>
+  {% endif %}
+</body>
+</html>

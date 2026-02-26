@@ -8,5 +8,6 @@ urlpatterns = [
     path("expenses/add/", views.add_expense, name="add_expense"),
     path("incomes/add/", views.add_income, name="add_income"),
     path("budget/set/", views.set_budget, name="set_budget"),
+    path("history/", views.history, name="history"),
     path("register/", views.register_view, name="register"),
 ]
