@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm
+from .forms import ExpenseForm, RegisterForm, IncomeForm, BudgetForm
 from django.db.models import Sum
 from datetime import date
 from .models import Expense, Income, Budget
@@ -51,4 +51,56 @@ def dashboard(request):
         "recent_incomes": recent_incomes,
     }
     return render(request, "core/dashboard.html", context)
+@login_required
+def add_expense(request):
+    if request.method == "POST":
+        form = ExpenseForm(request.POST)
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.user = request.user
+            expense.save()
+            return redirect("dashboard")
+    else:
+        form = ExpenseForm()
+
+    return render(request, "core/add_expense.html", {"form": form})
+
+@login_required
+def add_income(request):
+    if request.method == "POST":
+        form = IncomeForm(request.POST)
+        if form.is_valid():
+            income = form.save(commit=False)
+            income.user = request.user
+            income.save()
+            return redirect("dashboard")
+    else:
+        form = IncomeForm()
+
+    return render(request, "core/add_income.html", {"form": form})
+
+@login_required
+def set_budget(request):
+    if request.method == "POST":
+        form = BudgetForm(request.POST)
+        if form.is_valid():
+            budget = form.save(commit=False)
+            budget.user = request.user
+
+            # normalize month to 1st day
+            budget.month = budget.month.replace(day=1)
+
+            # update if already exists
+            existing = Budget.objects.filter(user=request.user, month=budget.month).first()
+            if existing:
+                existing.limit = budget.limit
+                existing.save()
+            else:
+                budget.save()
+
+            return redirect("dashboard")
+    else:
+        form = BudgetForm()
+
+    return render(request, "core/set_budget.html", {"form": form})
 

@@ -9,10 +9,13 @@
   <p>Hi, {{ request.user.username }}!</p>
 
   <p><a href="{% url 'logout' %}">Logout</a></p>
+  <p><a href="{% url 'add_expense' %}">➕ Add Expense</a></p>
+  <p><a href="{% url 'add_income' %}">➕ Add Income</a></p>
+  <p><a href="{% url 'set_budget' %}">📌 Set Budget</a></p>
 
   <hr>
 
-  <h2>This month ({{ month_start|date:"Y-m" }})</h2>
+ <h2>This month ({{ month_start|date:"Y-m" }})</h2>
   <ul>
     <li>Total Income: {{ total_income }}</li>
     <li>Total Expenses: {{ total_expenses }}</li>
