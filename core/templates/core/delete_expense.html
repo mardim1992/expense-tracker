@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Expense</title>
+</head>
+<body>
+  <h1>Delete Expense</h1>
+
+  <p><a href="{% url 'history' %}">Back to History</a></p>
+
+  <p>Are you sure you want to delete this expense?</p>
+
+  <ul>
+    <li>Date: {{ expense.date }}</li>
+    <li>Category: {{ expense.get_category_display }}</li>
+    <li>Amount: {{ expense.amount }}</li>
+    <li>Description: {{ expense.description }}</li>
+  </ul>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+  </form>
+</body>
+</html>

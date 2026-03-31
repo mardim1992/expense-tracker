@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reports</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .top-links {
+      margin-bottom: 25px;
+    }
+
+    .top-links a {
+      display: inline-block;
+      margin-right: 12px;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      background-color: #ffffff;
+      border: 1px solid #dcdcdc;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #222;
+      font-weight: bold;
+    }
+
+    .top-links a:hover {
+      background-color: #eef3f8;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .filter-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-form input,
+    .filter-form button,
+    .filter-form a {
+      font-size: 16px;
+    }
+
+    .filter-form button {
+      padding: 8px 12px;
+      border: 1px solid #dcdcdc;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+    }
+
+    .filter-form button:hover {
+      background: #eef3f8;
+    }
+
+    .filter-form a {
+      text-decoration: none;
+      color: #3366cc;
+    }
+
+    .totals p {
+      margin: 10px 0;
+      font-size: 18px;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 0 0 20px 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    canvas {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+
+    .muted {
+      color: #666;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Reports</h1>
+
+    <div class="top-links">
+  <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+  <a href="{% url 'history' %}">📜 View History</a>
+  <a href="{% url 'export_csv' %}">⬇ Export CSV</a>
+  <a href="{% url 'export_excel' %}">📗 Export Excel</a>
+</div>
+
+    <div class="card">
+      <form method="get" class="filter-form">
+        <label for="month"><strong>Select month:</strong></label>
+        <input type="month" id="month" name="month" value="{{ selected_month }}">
+        <button type="submit">Apply</button>
+        <a href="{% url 'reports' %}">Clear</a>
+      </form>
+    </div>
+
+    <div class="card totals">
+      <h2>Totals</h2>
+      <p><strong>Total Expenses:</strong> {{ total_expenses }} €</p>
+      <p><strong>Total Incomes:</strong> {{ total_incomes }} €</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Expenses by Category</h2>
+        <ul>
+          {% for row in expense_report %}
+            <li><strong>{{ row.label }}:</strong> {{ row.total }} € ({{ row.percent|floatformat:1 }}%)</li>
+          {% empty %}
+            <li class="muted">No expense data for this selection.</li>
+          {% endfor %}
+        </ul>
+        <canvas id="expenseChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h2>Incomes by Category</h2>
+        <ul>
+          {% for row in income_report %}
+            <li><strong>{{ row.label }}:</strong> {{ row.total }} € ({{ row.percent|floatformat:1 }}%)</li>
+          {% empty %}
+            <li class="muted">No income data for this selection.</li>
+          {% endfor %}
+        </ul>
+        <canvas id="incomeChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    new Chart(document.getElementById("expenseChart"), {
+      type: "pie",
+      data: {
+        labels: [{% for row in expense_report %}"{{ row.label }}",{% endfor %}],
+        datasets: [{
+          data: [{% for row in expense_report %}{{ row.total }},{% endfor %}],
+          backgroundColor: [
+            "#4CAF50",
+            "#FF9800",
+            "#2196F3",
+            "#E91E63",
+            "#9C27B0",
+            "#FF5722"
+          ]
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: "bottom"
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById("incomeChart"), {
+      type: "pie",
+      data: {
+        labels: [{% for row in income_report %}"{{ row.label }}",{% endfor %}],
+        datasets: [{
+          data: [{% for row in income_report %}{{ row.total }},{% endfor %}],
+          backgroundColor: [
+            "#3F51B5",
+            "#00BCD4",
+            "#8BC34A",
+            "#FFC107",
+            "#FF5722",
+            "#795548"
+          ]
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: "bottom"
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

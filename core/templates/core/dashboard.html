@@ -3,52 +3,214 @@
 <head>
   <meta charset="UTF-8" />
   <title>Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .welcome {
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .nav-links {
+      margin-bottom: 25px;
+    }
+
+    .nav-links a {
+      display: inline-block;
+      margin-right: 12px;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      background-color: #ffffff;
+      border: 1px solid #dcdcdc;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #222;
+      font-weight: bold;
+    }
+
+    .nav-links a:hover {
+      background-color: #eef3f8;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2,
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    .summary-list,
+    .recent-list {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .summary-list li,
+    .recent-list li {
+      margin-bottom: 10px;
+    }
+
+    .budget-box {
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .budget-safe {
+      border: 2px solid green;
+      background-color: #e8fbe8;
+      color: #136f13;
+    }
+
+    .budget-warning {
+      border: 2px solid orange;
+      background-color: #fff4df;
+      color: #9a5a00;
+    }
+
+    .budget-danger {
+      border: 2px solid red;
+      background-color: #ffe5e5;
+      color: #a30000;
+    }
+
+    .muted {
+      color: #666;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links a {
+        display: block;
+        width: fit-content;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Dashboard</h1>
-  <p>Hi, {{ request.user.username }}!</p>
+  <div class="container">
+    <h1>Dashboard</h1>
+    <p class="welcome">Hi, {{ request.user.username }}!</p>
 
-  <p><a href="{% url 'logout' %}">Logout</a></p>
-  <p><a href="{% url 'add_expense' %}">➕ Add Expense</a></p>
-  <p><a href="{% url 'add_income' %}">➕ Add Income</a></p>
-  <p><a href="{% url 'set_budget' %}">📌 Set Budget</a></p>
-  <p><a href="{% url 'history' %}">📜 View History</a></p>
+    <div class="nav-links">
+  <a href="{% url 'add_expense' %}">➕ Add Expense</a>
+  <a href="{% url 'add_income' %}">➕ Add Income</a>
+  <a href="{% url 'set_budget' %}">📌 Set Budget</a>
+  <a href="{% url 'history' %}">📜 View History</a>
+  <a href="{% url 'reports' %}">📊 Reports</a>
 
-  <hr>
+  <form method="post" action="{% url 'logout' %}" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" style="padding: 10px 14px; border-radius: 8px; border: 1px solid #dcdcdc; background: white; cursor: pointer;">
+      Logout
+    </button>
+  </form>
+</div>
 
- <h2>This month ({{ month_start|date:"Y-m" }})</h2>
-  <ul>
-    <li>Total Income: {{ total_income }}</li>
-    <li>Total Expenses: {{ total_expenses }}</li>
-    <li>Net: {{ net }}</li>
-  </ul>
-
-  <h3>Budget</h3>
-  {% if budget_limit %}
-    <p>Limit: {{ budget_limit }}</p>
-    <p>Remaining: {{ budget_remaining }}</p>
+    <div class="grid">
+      <div class="card">
+        <h2>This month ({{ month_start|date:"F Y" }})</h2>
+        <ul class="summary-list">
+          <li><strong>Total Income:</strong> {{ total_income }} €</li>
+          <li><strong>Total Expenses:</strong> {{ total_expenses }} €</li>
+          <li>
+  <strong>Net:</strong>
+  {% if net < 0 %}
+    <span style="color: red;">{{ net }} €</span>
   {% else %}
-    <p>No budget set for this month.</p>
+    <span style="color: green;">{{ net }} €</span>
   {% endif %}
+</li>
+</li>
+        </ul>
+      </div>
 
-  <hr>
+      <div class="card">
+        <h3>Budget</h3>
 
-  <h3>Recent Expenses</h3>
-  <ul>
-    {% for e in recent_expenses %}
-      <li>{{ e.date }} - {{ e.get_category_display }} - {{ e.amount }} {% if e.description %} ({{ e.description }}){% endif %}</li>
-    {% empty %}
-      <li>No expenses yet.</li>
-    {% endfor %}
-  </ul>
+        {% if budget_limit %}
+          <p><strong>Limit:</strong> {{ budget_limit }} €</p>
+          <p><strong>Remaining:</strong> {{ budget_remaining }} €</p>
+          <p><strong>Used:</strong> {{ budget_used_percent|floatformat:2 }}%</p>
 
-  <h3>Recent Incomes</h3>
-  <ul>
-    {% for i in recent_incomes %}
-      <li>{{ i.date }} - {{ i.get_category_display }} - {{ i.amount }} {% if i.description %} ({{ i.description }}){% endif %}</li>
-    {% empty %}
-      <li>No incomes yet.</li>
-    {% endfor %}
-  </ul>
+          {% if budget_status == "danger" %}
+            <div class="budget-box budget-danger">
+              {{ budget_message }}
+            </div>
+          {% elif budget_status == "warning" %}
+            <div class="budget-box budget-warning">
+              {{ budget_message }}
+            </div>
+          {% elif budget_status == "safe" %}
+            <div class="budget-box budget-safe">
+              {{ budget_message }}
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="muted">No budget set for this month.</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3>Recent Expenses</h3>
+        <ul class="recent-list">
+          {% for e in recent_expenses %}
+            <li>
+              {{ e.date|date:"M d, Y" }} - {{ e.get_category_display }} - {{ e.amount }} €
+              {% if e.description %} ({{ e.description }}){% endif %}
+            </li>
+          {% empty %}
+            <li>No expenses yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Recent Incomes</h3>
+        <ul class="recent-list">
+          {% for i in recent_incomes %}
+            <li>
+              {{ i.date|date:"M d, Y" }} - {{ i.get_category_display }} - {{ i.amount }} €
+              {% if i.description %} ({{ i.description }}){% endif %}
+            </li>
+          {% empty %}
+            <li>No incomes yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
