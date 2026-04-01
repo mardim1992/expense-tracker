@@ -1,97 +1,336 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>History</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #1f3b57;
+      font-size: 46px;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #1f3b57;
+      font-size: 28px;
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #1f3b57;
+      font-size: 22px;
+    }
+
+    .top-links {
+      margin-bottom: 25px;
+    }
+
+    .top-links a {
+      display: inline-block;
+      margin-right: 12px;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      background-color: #ffffff;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #222;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: 0.2s ease;
+    }
+
+    .top-links a:hover {
+      background-color: #eef3f8;
+      transform: translateY(-2px);
+    }
+
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    .filter-form {
+      display: flex;
+      align-items: end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-group label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .filter-form input,
+    .filter-form select {
+      padding: 10px 12px;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      font-size: 15px;
+      background: white;
+      min-width: 170px;
+    }
+
+    .filter-form button {
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .filter-form button:hover {
+      background: #43a047;
+    }
+
+    .clear-link {
+      text-decoration: none;
+      color: #3366cc;
+      font-weight: bold;
+      padding-bottom: 10px;
+    }
+
+    .clear-link:hover {
+      text-decoration: underline;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .record-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .record-list li {
+      padding: 14px 0;
+      border-bottom: 1px solid #ececec;
+      line-height: 1.6;
+    }
+
+    .record-list li:last-child {
+      border-bottom: none;
+    }
+
+    .record-date {
+      color: #666;
+      font-weight: bold;
+    }
+
+    .record-amount-expense {
+      color: #e53935;
+      font-weight: bold;
+    }
+
+    .record-amount-income {
+      color: #43a047;
+      font-weight: bold;
+    }
+
+    .record-actions a {
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .edit-link {
+      color: #1e88e5;
+    }
+
+    .delete-link {
+      color: #e53935;
+    }
+
+    .edit-link:hover,
+    .delete-link:hover {
+      text-decoration: underline;
+    }
+
+    .muted {
+      color: #666;
+    }
+
+    .pagination {
+      margin-top: 18px;
+      color: #444;
+    }
+
+    .pagination a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #3366cc;
+      margin: 0 8px;
+    }
+
+    .pagination a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 38px;
+      }
+
+      .filter-form {
+        align-items: stretch;
+      }
+
+      .filter-form input,
+      .filter-form select {
+        min-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>History</h1>
-  <p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+  <div class="container">
+    <h1>History</h1>
 
-  <h3>Filters</h3>
-  <form method="get">
-    <label>From:</label>
-    <input type="date" name="from" value="{{ date_from }}">
+    <div class="top-links">
+      <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+      <a href="{% url 'reports' %}">📊 Reports</a>
+    </div>
 
-    <label>To:</label>
-    <input type="date" name="to" value="{{ date_to }}">
+    <div class="card">
+      <h3>Filters</h3>
+      <form method="get" class="filter-form">
+        <div class="filter-group">
+          <label for="from">From</label>
+          <input type="date" id="from" name="from" value="{{ date_from }}">
+        </div>
 
-    <label>Category:</label>
-    <select name="category">
-      <option value="">All</option>
-      {% for value, label in categories %}
-        <option value="{{ value }}" {% if category == value %}selected{% endif %}>
-          {{ label }}
-        </option>
-      {% endfor %}
-    </select>
+        <div class="filter-group">
+          <label for="to">To</label>
+          <input type="date" id="to" name="to" value="{{ date_to }}">
+        </div>
 
-    <button type="submit">Apply</button>
-    <a href="{% url 'history' %}">Clear</a>
-  </form>
+        <div class="filter-group">
+          <label for="category">Category</label>
+          <select id="category" name="category">
+            <option value="">All</option>
+            {% for value, label in categories %}
+              <option value="{{ value }}" {% if category == value %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
 
-  <hr>
+        <button type="submit">Apply</button>
+        <a href="{% url 'history' %}" class="clear-link">Clear</a>
+      </form>
+    </div>
 
-  <h2>Expenses</h2>
-  <ul>
-    {% for e in exp_page %}
-      <li>
-        {{ e.date }} - {{ e.get_category_display }} - {{ e.amount }}
-        {% if e.description %}({{ e.description }}){% endif %}
-        |
-        <a href="{% url 'edit_expense' e.id %}">Edit</a>
-        |
-        <a href="{% url 'delete_expense' e.id %}">Delete</a>
-      </li>
-    {% empty %}
-      <li>No expenses.</li>
-    {% endfor %}
-  </ul>
+    <div class="grid">
+      <div class="card">
+        <h2>Expenses</h2>
+        <ul class="record-list">
+          {% for e in exp_page %}
+            <li>
+              <span class="record-date">{{ e.date|date:"M d, Y" }}</span> -
+              <strong>{{ e.get_category_display }}</strong> -
+              <span class="record-amount-expense">{{ e.amount }} €</span>
+              {% if e.description %} ({{ e.description }}){% endif %}
+              <br>
+              <span class="record-actions">
+                <a href="{% url 'edit_expense' e.id %}" class="edit-link">Edit</a>
+                <a href="{% url 'delete_expense' e.id %}" class="delete-link">Delete</a>
+              </span>
+            </li>
+          {% empty %}
+            <li class="muted">No expenses.</li>
+          {% endfor %}
+        </ul>
 
-  {% if exp_page.has_other_pages %}
-    <p>
-      {% if exp_page.has_previous %}
-        <a href="?exp_page={{ exp_page.previous_page_number }}&inc_page={{ inc_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Prev</a>
-      {% endif %}
+        {% if exp_page.has_other_pages %}
+          <div class="pagination">
+            {% if exp_page.has_previous %}
+              <a href="?exp_page={{ exp_page.previous_page_number }}&inc_page={{ inc_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Prev</a>
+            {% endif %}
 
-      Page {{ exp_page.number }} of {{ exp_page.paginator.num_pages }}
+            Page {{ exp_page.number }} of {{ exp_page.paginator.num_pages }}
 
-      {% if exp_page.has_next %}
-        <a href="?exp_page={{ exp_page.next_page_number }}&inc_page={{ inc_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Next</a>
-      {% endif %}
-    </p>
-  {% endif %}
+            {% if exp_page.has_next %}
+              <a href="?exp_page={{ exp_page.next_page_number }}&inc_page={{ inc_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Next</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
 
-  <hr>
+      <div class="card">
+        <h2>Incomes</h2>
+        <ul class="record-list">
+          {% for i in inc_page %}
+            <li>
+              <span class="record-date">{{ i.date|date:"M d, Y" }}</span> -
+              <strong>{{ i.get_category_display }}</strong> -
+              <span class="record-amount-income">{{ i.amount }} €</span>
+              {% if i.description %} ({{ i.description }}){% endif %}
+              <br>
+              <span class="record-actions">
+                <a href="{% url 'edit_income' i.id %}" class="edit-link">Edit</a>
+                <a href="{% url 'delete_income' i.id %}" class="delete-link">Delete</a>
+              </span>
+            </li>
+          {% empty %}
+            <li class="muted">No incomes.</li>
+          {% endfor %}
+        </ul>
 
-  <h2>Incomes</h2>
-  <ul>
-    {% for i in inc_page %}
-      <li>
-        {{ i.date }} - {{ i.get_category_display }} - {{ i.amount }}
-        {% if i.description %}({{ i.description }}){% endif %}
-        |
-        <a href="{% url 'edit_income' i.id %}">Edit</a>
-        |
-        <a href="{% url 'delete_income' i.id %}">Delete</a>
-      </li>
-    {% empty %}
-      <li>No incomes.</li>
-    {% endfor %}
-  </ul>
+        {% if inc_page.has_other_pages %}
+          <div class="pagination">
+            {% if inc_page.has_previous %}
+              <a href="?inc_page={{ inc_page.previous_page_number }}&exp_page={{ exp_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Prev</a>
+            {% endif %}
 
-  {% if inc_page.has_other_pages %}
-    <p>
-      {% if inc_page.has_previous %}
-        <a href="?inc_page={{ inc_page.previous_page_number }}&exp_page={{ exp_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Prev</a>
-      {% endif %}
+            Page {{ inc_page.number }} of {{ inc_page.paginator.num_pages }}
 
-      Page {{ inc_page.number }} of {{ inc_page.paginator.num_pages }}
-
-      {% if inc_page.has_next %}
-        <a href="?inc_page={{ inc_page.next_page_number }}&exp_page={{ exp_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Next</a>
-      {% endif %}
-    </p>
-  {% endif %}
+            {% if inc_page.has_next %}
+              <a href="?inc_page={{ inc_page.next_page_number }}&exp_page={{ exp_page.number }}&from={{ date_from }}&to={{ date_to }}&category={{ category }}">Next</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -20,32 +20,46 @@
 
     h1 {
       margin-bottom: 10px;
+      color: #1f3b57;
+      font-size: 46px;
     }
 
     .welcome {
       margin-bottom: 20px;
       color: #555;
+      font-size: 18px;
     }
 
     .nav-links {
       margin-bottom: 25px;
     }
 
-    .nav-links a {
+    .nav-links a,
+    .logout-btn {
       display: inline-block;
       margin-right: 12px;
       margin-bottom: 10px;
       padding: 10px 14px;
       background-color: #ffffff;
       border: 1px solid #dcdcdc;
-      border-radius: 8px;
+      border-radius: 10px;
       text-decoration: none;
       color: #222;
       font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: 0.2s ease;
+      cursor: pointer;
+      font-size: 16px;
     }
 
-    .nav-links a:hover {
+    .nav-links a:hover,
+    .logout-btn:hover {
       background-color: #eef3f8;
+      transform: translateY(-2px);
+    }
+
+    .logout-form {
+      display: inline;
     }
 
     .grid {
@@ -56,15 +70,21 @@
 
     .card {
       background-color: #ffffff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transition: 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
     }
 
     .card h2,
     .card h3 {
       margin-top: 0;
       margin-bottom: 15px;
+      color: #1f3b57;
     }
 
     .summary-list,
@@ -76,12 +96,14 @@
     .summary-list li,
     .recent-list li {
       margin-bottom: 10px;
+      line-height: 1.5;
+      font-size: 17px;
     }
 
     .budget-box {
       margin-top: 15px;
       padding: 14px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-weight: bold;
     }
 
@@ -107,14 +129,29 @@
       color: #666;
     }
 
+    .net-positive {
+      color: green;
+      font-weight: bold;
+    }
+
+    .net-negative {
+      color: red;
+      font-weight: bold;
+    }
+
     @media (max-width: 800px) {
       .grid {
         grid-template-columns: 1fr;
       }
 
-      .nav-links a {
+      .nav-links a,
+      .logout-btn {
         display: block;
         width: fit-content;
+      }
+
+      h1 {
+        font-size: 38px;
       }
     }
   </style>
@@ -125,19 +162,17 @@
     <p class="welcome">Hi, {{ request.user.username }}!</p>
 
     <div class="nav-links">
-  <a href="{% url 'add_expense' %}">➕ Add Expense</a>
-  <a href="{% url 'add_income' %}">➕ Add Income</a>
-  <a href="{% url 'set_budget' %}">📌 Set Budget</a>
-  <a href="{% url 'history' %}">📜 View History</a>
-  <a href="{% url 'reports' %}">📊 Reports</a>
+      <a href="{% url 'add_expense' %}">➕ Add Expense</a>
+      <a href="{% url 'add_income' %}">➕ Add Income</a>
+      <a href="{% url 'set_budget' %}">📌 Set Budget</a>
+      <a href="{% url 'history' %}">📜 View History</a>
+      <a href="{% url 'reports' %}">📊 Reports</a>
 
-  <form method="post" action="{% url 'logout' %}" style="display:inline;">
-    {% csrf_token %}
-    <button type="submit" style="padding: 10px 14px; border-radius: 8px; border: 1px solid #dcdcdc; background: white; cursor: pointer;">
-      Logout
-    </button>
-  </form>
-</div>
+      <form method="post" action="{% url 'logout' %}" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </div>
 
     <div class="grid">
       <div class="card">
@@ -146,14 +181,13 @@
           <li><strong>Total Income:</strong> {{ total_income }} €</li>
           <li><strong>Total Expenses:</strong> {{ total_expenses }} €</li>
           <li>
-  <strong>Net:</strong>
-  {% if net < 0 %}
-    <span style="color: red;">{{ net }} €</span>
-  {% else %}
-    <span style="color: green;">{{ net }} €</span>
-  {% endif %}
-</li>
-</li>
+            <strong>Net:</strong>
+            {% if net < 0 %}
+              <span class="net-negative">{{ net }} €</span>
+            {% else %}
+              <span class="net-positive">{{ net }} €</span>
+            {% endif %}
+          </li>
         </ul>
       </div>
 
@@ -192,7 +226,7 @@
               {% if e.description %} ({{ e.description }}){% endif %}
             </li>
           {% empty %}
-            <li>No expenses yet.</li>
+            <li class="muted">No expenses yet.</li>
           {% endfor %}
         </ul>
       </div>
@@ -206,7 +240,7 @@
               {% if i.description %} ({{ i.description }}){% endif %}
             </li>
           {% empty %}
-            <li>No incomes yet.</li>
+            <li class="muted">No incomes yet.</li>
           {% endfor %}
         </ul>
       </div>

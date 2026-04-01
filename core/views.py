@@ -271,8 +271,8 @@ def reports(request):
 
     total_expenses = expenses.aggregate(s=Sum("amount"))["s"] or 0
     total_incomes = incomes.aggregate(s=Sum("amount"))["s"] or 0
+    balance = total_incomes - total_expenses
 
-    
     expense_choices = dict(Expense._meta.get_field("category").choices)
     income_choices = dict(Income._meta.get_field("category").choices)
 
@@ -289,9 +289,9 @@ def reports(request):
         "income_report": income_report,
         "total_expenses": total_expenses,
         "total_incomes": total_incomes,
+        "balance": balance,
         "selected_month": selected_month or "",
     })
-
 @login_required
 def export_csv(request):
     response = HttpResponse(content_type="text/csv")

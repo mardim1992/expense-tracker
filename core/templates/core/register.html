@@ -3,16 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <title>Register</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #1f3b57;
+      font-size: 42px;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    form p {
+      margin-bottom: 16px;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    form input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      font-size: 15px;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    .btn {
+      padding: 11px 18px;
+      border-radius: 10px;
+      background: #43a047;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      background: #2e7d32;
+    }
+
+    .login-link {
+      margin-top: 15px;
+      display: block;
+      font-size: 15px;
+    }
+
+    .login-link a {
+      text-decoration: none;
+      color: #1e88e5;
+      font-weight: bold;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 800px) {
+      .container {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Register</h1>
+  <div class="container">
+    <h1>Register</h1>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create account</button>
-  </form>
+    <div class="card">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Create Account</button>
+      </form>
 
-  <p>Already have an account? <a href="/login/">Login</a></p>
+      <p class="login-link">
+        Already have an account?
+        <a href="{% url 'login' %}">Login</a>
+      </p>
+    </div>
+  </div>
 </body>
 </html>

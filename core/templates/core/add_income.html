@@ -1,19 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Add Income</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #1f3b57;
+      font-size: 42px;
+    }
+
+    .top-links {
+      margin-bottom: 25px;
+    }
+
+    .top-links a {
+      display: inline-block;
+      padding: 10px 14px;
+      background-color: #ffffff;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #222;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: 0.2s ease;
+    }
+
+    .top-links a:hover {
+      background-color: #eef3f8;
+      transform: translateY(-2px);
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    form p {
+      margin-bottom: 16px;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    form input,
+    form select,
+    form textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      font-size: 15px;
+      box-sizing: border-box;
+      background: white;
+    }
+
+    form textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .save-btn {
+      padding: 11px 18px;
+      border-radius: 10px;
+      background: #43a047;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: 0.2s ease;
+    }
+
+    .save-btn:hover {
+      background: #388e3c;
+    }
+
+    @media (max-width: 800px) {
+      .container {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<h1>Add Income</h1>
+  <div class="container">
+    <h1>Add Income</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+    <div class="top-links">
+      <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+    </div>
 
-<p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+    <div class="card">
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save-btn">Save</button>
+      </form>
+    </div>
+  </div>
 
 </body>
 </html>

@@ -2,11 +2,106 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Expense Tracker</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #eef3f8, #f9fbfd);
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 80px auto;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 52px;
+      margin-bottom: 15px;
+      color: #1f3b57;
+    }
+
+    p {
+      font-size: 20px;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      transition: 0.2s ease;
+    }
+
+    .btn-login {
+      background: #1e88e5;
+      color: white;
+    }
+
+    .btn-login:hover {
+      background: #1565c0;
+    }
+
+    .btn-register {
+      background: #43a047;
+      color: white;
+    }
+
+    .btn-register:hover {
+      background: #2e7d32;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    @media (max-width: 800px) {
+      h1 {
+        font-size: 40px;
+      }
+
+      p {
+        font-size: 18px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Expense Tracker</h1>
-  <p>Home page is working ✅</p>
+
+  <div class="container">
+    <div class="card">
+      <h1>Expense Tracker</h1>
+
+      <p>
+        Manage your personal finances, track expenses and income,
+        and monitor your budget easily.
+      </p>
+
+      <div class="buttons">
+        <a href="{% url 'login' %}" class="btn btn-login">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
